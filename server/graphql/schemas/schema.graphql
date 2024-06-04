@@ -1,0 +1,37 @@
+scalar GQLDate
+
+type Expense {
+  id: Int!
+  name: String!
+  date: GQLDate!
+  type: String!
+  tag: String!
+  description: String
+  amount: Float!
+  recurring: Boolean
+  paymentMethod: String!
+  created: GQLDate
+}
+
+input InputExpense {
+  id: Int
+  name: String!
+  date: GQLDate!
+  type: String!
+  tag: String!
+  description: String
+  amount: Float!
+  recurring: Boolean
+  paymentMethod: String!
+}
+
+type Query {
+  getExpenses: [Expense!]!
+  getExpenseByID(id: Int!): Expense!
+}
+
+type Mutation {
+  createExpense(expense: InputExpense!): Expense
+  updateExpense(id: Int!, expense: InputExpense!): Expense
+  removeExpense(id: Int!): Expense
+}
