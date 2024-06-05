@@ -6,8 +6,10 @@ import {
 } from "../interface/expense";
 import { useMutation } from "@apollo/client";
 import { CREATE_EXPENSE, GET_EXPENSE_LIST } from "../service/graphql/expense";
+import { useNavigate } from "react-router-dom";
 
 const CreateExpense = () => {
+  const navigate = useNavigate();
   const [expense, setExpense] = useState<InputExpense>({
     name: "",
     type: "",
@@ -23,7 +25,7 @@ const CreateExpense = () => {
     CreateExpenseVars
   >(CREATE_EXPENSE, {
     refetchQueries: [{ query: GET_EXPENSE_LIST }],
-    onCompleted: () => alert("Success"),
+    onCompleted: () => navigate("/expense"),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

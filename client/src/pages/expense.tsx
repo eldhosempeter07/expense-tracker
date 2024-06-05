@@ -1,8 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { Expense } from "../interface/expense";
+import { useParams } from "react-router-dom";
 
 const ExpenseDetails = () => {
-  const id = 1392;
+  const { id } = useParams();
 
   const GET_EXPENSE = gql`
     query GetExpenseByID($id: Int!) {
@@ -22,7 +23,7 @@ const ExpenseDetails = () => {
   `;
 
   const { data, loading, error } = useQuery(GET_EXPENSE, {
-    variables: { id },
+    variables: { id: id && parseInt(id) },
   });
 
   if (loading) {

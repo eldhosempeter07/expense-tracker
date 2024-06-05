@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { DELETE_EXPENSE, GET_EXPENSE_LIST } from "../service/graphql/expense";
 import { Expense } from "../interface/expense";
+import { Link } from "react-router-dom";
 
 const ExpenseList = () => {
   const { data, loading, error } = useQuery(GET_EXPENSE_LIST);
@@ -53,6 +54,18 @@ const ExpenseList = () => {
             </p>
             <p className="text-lg text-gray-600">Tag: {expense.tag}</p>
             <p className="text-lg text-gray-600">Type: {expense.type}</p>
+            <Link
+              className="bg-green-600 hover:bg-green-700 py-[9px] px-5 mr-3 rounded text-white"
+              to={`/expense/view/${expense.id}`}
+            >
+              View
+            </Link>
+            <Link
+              className="bg-blue-600 hover:bg-blue-700 py-[9px] px-5 mr-3 rounded text-white"
+              to={`/expense/edit/${expense.id}`}
+            >
+              Edit
+            </Link>
             <button
               onClick={() => handleDelete(expense.id)}
               className="mt-3 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
