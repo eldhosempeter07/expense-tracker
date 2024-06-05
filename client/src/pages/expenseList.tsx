@@ -1,0 +1,69 @@
+import { useMutation, useQuery } from "@apollo/client";
+import { DELETE_EXPENSE, GET_EXPENSE_LIST } from "../service/graphql/expense";
+import { Expense } from "../interface/expense";
+
+const ExpenseList = () => {
+  const { data, loading, error } = useQuery(GET_EXPENSE_LIST);
+  const [removeExpense] = useMutation(DELETE_EXPENSE, {
+    onCompleted: () => alert("Expense deleted successfully!"),
+    refetchQueries: [{ query: GET_EXPENSE_LIST }],
+  });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-500 text-lg">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg">{error.message}</p>
+      </div>
+    );
+  }
+
+  const handleDelete = (id: number) => {
+    removeExpense({
+      variables: {
+        id,
+      },
+    });
+  };
+
+  return (
+    <div className="container mx-auto px-4">
+      <h1 className="text-center mt-10 font-bold text-2xl uppercase text-blue-500">
+        Expense List
+      </h1>
+      <div className="mt-8 ">
+        {data?.getExpenses?.map((expense: Expense) => (
+          <div
+            key={expense.id}
+            className="max-w-5xl mx-auto border border-cyan-500 rounded-lg my-3 p-4 bg-white shadow-md"
+          >
+            <p className="text-xl font-semibold text-gray-700">
+              {expense.name}
+            </p>
+            <p className="text-lg text-gray-600">Amount: ${expense.amount}</p>
+            <p className="text-lg text-gray-600">
+              Description: {expense.description}
+            </p>
+            <p className="text-lg text-gray-600">Tag: {expense.tag}</p>
+            <p className="text-lg text-gray-600">Type: {expense.type}</p>
+            <button
+              onClick={() => handleDelete(expense.id)}
+              className="mt-3 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ExpenseList;
