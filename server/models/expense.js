@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const ExpenseSchema = new Schema({
   id: { type: Number, index: true, required: true },
   name: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date },
   type: { type: String, required: true },
   tag: { type: String, required: true },
   description: { type: String },

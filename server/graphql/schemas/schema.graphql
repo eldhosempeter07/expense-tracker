@@ -3,7 +3,7 @@ scalar GQLDate
 type Expense {
   id: Int!
   name: String!
-  date: GQLDate!
+  date: GQLDate
   type: String!
   tag: String!
   description: String
@@ -16,7 +16,7 @@ type Expense {
 input InputExpense {
   id: Int
   name: String!
-  date: GQLDate!
+  date: GQLDate
   type: String!
   tag: String!
   description: String
