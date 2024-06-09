@@ -12,6 +12,7 @@ const ExpenseSchema = new Schema({
   amount: { type: Number, required: true },
   recurring: { type: Boolean },
   paymentMethod: { type: String, required: true },
+  userId: { type: String, required: true },
   created: { type: Date, default: new Date() },
 });
 

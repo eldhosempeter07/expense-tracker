@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ApolloServer } from "apollo-server-express";
 import { resolvers } from "./graphql/resolvers/resolvers.js";
+import jwt from "jsonwebtoken";
+import { AuthenticationError } from "apollo-server-express";
 
 const app = express();
 
@@ -29,7 +31,34 @@ const typeDefs = fs.readFileSync(
   "utf-8"
 );
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const userContext = ({ req }) => {
+  const token = req.headers.authorization.split(" ")[1] || "";
+  try {
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+    "user", user;
+    return { user };
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: userContext,
+
+  formatError: (error) => {
+    // Ensure that status code is included in error formatting
+    if (error.originalError instanceof AuthenticationError) {
+      return {
+        message: error.message,
+        statusCode: 400, // Set status code for authentication errors
+      };
+    }
+    // Default error formatting
+    return error;
+  },
+});
 
 server.start().then(() => {
   server.applyMiddleware({ app, path: "/graphql", cors: true });
