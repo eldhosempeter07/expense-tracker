@@ -1,50 +1,36 @@
-import { useState } from "react";
-import {
-  InputExpense,
-  UpdateExpenseData,
-  UpdateExpenseVars,
-} from "../interface/expense";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { GET_EXPENSE_LIST, UPDATE_EXPENSE } from "../service/graphql/expense";
 import { useNavigate, useParams } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { UpdateExpenseData, UpdateExpenseVars } from "../interface/expense";
+import { GET_EXPENSE_LIST, UPDATE_EXPENSE } from "../service/graphql/expense";
+import { formatDate } from "../utils/utils";
+
+const GET_EXPENSE = gql`
+  query GetExpenseByID($id: Int!) {
+    getExpenseByID(id: $id) {
+      name
+      date
+      type
+      tag
+      description
+      amount
+      recurring
+      paymentMethod
+    }
+  }
+`;
 
 const UpdateExpense = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const GET_EXPENSE = gql`
-    query GetExpenseByID($id: Int!) {
-      getExpenseByID(id: $id) {
-        name
-        date
-        type
-        tag
-        description
-        amount
-        recurring
-        paymentMethod
+  const { loading, error } = useQuery(GET_EXPENSE, {
+    variables: { id: id ? parseInt(id) : 0 },
+    onCompleted: (data) => {
+      if (data && data.getExpenseByID) {
+        formik.setValues(data.getExpenseByID);
       }
-    }
-  `;
-
-  const [expense, setExpense] = useState<InputExpense>({
-    name: "",
-    type: "",
-    tag: "",
-    description: "",
-    amount: 0,
-    recurring: false,
-    paymentMethod: "",
-  });
-
-  const {
-    data: expenses,
-    loading,
-    error,
-  } = useQuery(GET_EXPENSE, {
-    variables: { id: id && parseInt(id) },
-    onCompleted: () => {
-      setExpense(expenses?.getExpenseByID);
     },
   });
 
@@ -55,6 +41,45 @@ const UpdateExpense = () => {
       onCompleted: () => navigate("/expense"),
     }
   );
+
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    type: Yup.string()
+      .oneOf(["expense", "income"])
+      .required("Type is required"),
+    date: Yup.date().required("Date is required"),
+    tag: Yup.string().required("Tag is required"),
+    description: Yup.string().required("Description is required"),
+    amount: Yup.number()
+      .required("Amount is required")
+      .min(0, "Amount must be positive"),
+    paymentMethod: Yup.string().required("Payment Method is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      date: "",
+      type: "expense",
+      tag: "",
+      description: "",
+      amount: 0,
+      recurring: false,
+      paymentMethod: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      if (id) {
+        updateExpense({
+          variables: {
+            expense: values,
+            id: parseInt(id),
+          },
+        });
+      }
+    },
+    enableReinitialize: true,
+  });
 
   if (loading) {
     return (
@@ -72,55 +97,59 @@ const UpdateExpense = () => {
     );
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setExpense((prev) => ({
-      ...prev,
-      [name]: name === "amount" ? parseInt(value) : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (id) {
-      updateExpense({
-        variables: {
-          expense: expense,
-          id: parseInt(id),
-        },
-      });
-    }
-  };
-
   return (
     <div>
       <h1 className="text-center mt-5 font-bold text-[25px] uppercase text-blue-500">
         Update Expense
       </h1>
       <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700">Name</label>
             <input
               type="text"
               name="name"
               placeholder="Name"
-              value={expense.name}
-              onChange={handleChange}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.name && formik.errors.name ? (
+              <div className="text-red-500">{formik.errors.name}</div>
+            ) : null}
           </div>
 
           <div>
             <label className="block text-gray-700">Type</label>
-            <input
-              type="text"
+            <select
               name="type"
-              placeholder="Type"
-              value={expense.type}
-              onChange={handleChange}
+              value={formik.values.type}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+            {formik.touched.type && formik.errors.type ? (
+              <div className="text-red-500">{formik.errors.type}</div>
+            ) : null}
+          </div>
+
+          <div>
+            <label className="block text-gray-700">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={formatDate(formik.values.date)}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.date && formik.errors.date ? (
+              <div className="text-red-500">{formik.errors.date}</div>
+            ) : null}
           </div>
 
           <div>
@@ -129,10 +158,14 @@ const UpdateExpense = () => {
               type="text"
               name="tag"
               placeholder="Tag"
-              value={expense.tag}
-              onChange={handleChange}
+              value={formik.values.tag}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.tag && formik.errors.tag ? (
+              <div className="text-red-500">{formik.errors.tag}</div>
+            ) : null}
           </div>
 
           <div>
@@ -141,10 +174,14 @@ const UpdateExpense = () => {
               type="text"
               name="description"
               placeholder="Description"
-              value={expense.description}
-              onChange={handleChange}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.description && formik.errors.description ? (
+              <div className="text-red-500">{formik.errors.description}</div>
+            ) : null}
           </div>
 
           <div>
@@ -153,10 +190,14 @@ const UpdateExpense = () => {
               type="number"
               name="amount"
               placeholder="Amount"
-              value={expense.amount}
-              onChange={handleChange}
+              value={formik.values.amount}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.amount && formik.errors.amount ? (
+              <div className="text-red-500">{formik.errors.amount}</div>
+            ) : null}
           </div>
 
           <div>
@@ -165,10 +206,14 @@ const UpdateExpense = () => {
               type="text"
               name="paymentMethod"
               placeholder="Payment Method"
-              value={expense.paymentMethod}
-              onChange={handleChange}
+              value={formik.values.paymentMethod}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"
             />
+            {formik.touched.paymentMethod && formik.errors.paymentMethod ? (
+              <div className="text-red-500">{formik.errors.paymentMethod}</div>
+            ) : null}
           </div>
           <button className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
             Submit

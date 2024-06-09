@@ -46,7 +46,7 @@ const ExpenseDetails = () => {
   return (
     <div>
       <h1 className="text-center mt-5 font-bold text-2xl uppercase text-blue-500">
-        Expense Details
+        Transaction Details
       </h1>
       <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
         {expense && (

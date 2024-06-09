@@ -37,15 +37,19 @@ const ExpenseList = () => {
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-center mt-10 font-bold text-2xl uppercase text-blue-500">
-        Expense List
+        Transaction List
       </h1>
       <div className="mt-8 ">
         {data?.getExpenses?.map((expense: Expense) => (
           <div
             key={expense.id}
-            className="max-w-5xl mx-auto border border-cyan-500 rounded-lg my-3 p-4 bg-white shadow-md"
+            className="max-w-5xl mx-auto border border-cyan-500 rounded-lg my-7 p-8 bg-white shadow-md"
           >
-            <p className="text-xl font-semibold text-gray-700">
+            <p
+              className={`text-xl font-semibold  ${
+                expense.type === "expense" ? "text-red-500" : "text-green-500"
+              }`}
+            >
               {expense.name}
             </p>
             <p className="text-lg text-gray-600">Amount: ${expense.amount}</p>
@@ -72,6 +76,9 @@ const ExpenseList = () => {
             >
               Delete
             </button>
+            <p className="text-end text-blue-500 font-bold">
+              {expense?.created?.toString().slice(0, 10)}
+            </p>
           </div>
         ))}
       </div>

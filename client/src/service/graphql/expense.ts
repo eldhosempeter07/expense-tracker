@@ -17,6 +17,25 @@ export const GET_EXPENSE_LIST = gql`
   }
 `;
 
+export const GET_EXPENSE_CHART = gql`
+  query GetExpenseChart {
+    getExpenseChart {
+      month
+      income
+      expense
+    }
+  }
+`;
+
+export const GET_EXPENSE_INCOME = gql`
+  query GetExpenseIncome {
+    getExpenseIncome {
+      name
+      amount
+    }
+  }
+`;
+
 export const CREATE_EXPENSE = gql`
   mutation CreateExpense($expense: InputExpense!) {
     createExpense(expense: $expense) {
