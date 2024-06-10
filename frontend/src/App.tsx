@@ -1,16 +1,17 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import CreateExpense from "./pages/createExpense";
-import ExpenseList from "./pages/expenseList";
-import ExpenseDetails from "./pages/expense";
-
-import UpdateExpense from "./pages/updateExpense";
 import Navbar from "./components/navbar";
-import Register from "./pages/register";
-import Login from "./pages/login";
+
+const CreateExpense = lazy(() => import("./pages/createExpense"));
+const ExpenseList = lazy(() => import("./pages/expenseList"));
+const ExpenseDetails = lazy(() => import("./pages/expense"));
+const UpdateExpense = lazy(() => import("./pages/updateExpense"));
+const Register = lazy(() => import("./pages/register"));
+const Login = lazy(() => import("./pages/login"));
+const Profile = lazy(() => import("./pages/profile"));
+const Dashboard = lazy(() => import("./pages/dashboard"));
+
 import PrivateRoute from "./utils/privateRoute";
-import Dashboard from "./pages/dashboard";
-import Profile from "./pages/profile";
 
 const App: React.FC = () => {
   const isAuthenticated = !!localStorage.getItem("token");
@@ -22,33 +23,78 @@ const App: React.FC = () => {
         <Route path="/" element={<PrivateRoute component={Dashboard} />} />
         <Route
           path="/register"
-          element={isAuthenticated ? <Navigate to="/" /> : <Register />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" />
+            ) : (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Register />
+              </Suspense>
+            )
+          }
         />
         <Route
           path="/login"
-          // element={<Login />}
-          element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" />
+            ) : (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Login />
+              </Suspense>
+            )
+          }
         />
         <Route
           path="dashboard"
-          element={<PrivateRoute component={Dashboard} />}
+          element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <PrivateRoute component={Dashboard} />
+            </Suspense>
+          }
         />
 
-        <Route path="profile" element={<PrivateRoute component={Profile} />} />
+        <Route
+          path="profile"
+          element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <PrivateRoute component={Profile} />
+            </Suspense>
+          }
+        />
         <Route path="/expense">
-          <Route index element={<PrivateRoute component={ExpenseList} />} />
+          <Route
+            index
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <PrivateRoute component={ExpenseList} />
+              </Suspense>
+            }
+          />
 
           <Route
             path="create"
-            element={<PrivateRoute component={CreateExpense} />}
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <PrivateRoute component={CreateExpense} />
+              </Suspense>
+            }
           />
           <Route
             path="edit/:id"
-            element={<PrivateRoute component={UpdateExpense} />}
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <PrivateRoute component={UpdateExpense} />
+              </Suspense>
+            }
           />
           <Route
             path="view/:id"
-            element={<PrivateRoute component={ExpenseDetails} />}
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <PrivateRoute component={ExpenseDetails} />
+              </Suspense>
+            }
           />
         </Route>
       </Routes>

@@ -81,10 +81,6 @@ const ExpenseDetails = () => {
               <span className="font-semibold">Recurring: </span>
               {expense.recurring ? "Yes" : "No"}
             </li>
-            {/* <li className="text-lg text-gray-600">
-              <span className="font-semibold">Created: </span>
-              {new Date(expense.created).toLocaleDateString()}
-            </li> */}
           </ul>
         )}
       </div>

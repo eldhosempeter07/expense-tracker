@@ -11,8 +11,12 @@ import {
 import { BrowserRouter } from "react-router-dom";
 import { setContext } from "@apollo/client/link/context";
 
+const backendURL = import.meta.env.PROD
+  ? import.meta.env.VITE_BACKEND_PROD_URL
+  : import.meta.env.VITE_BACKEND_DEV_URL;
+
 const httpLink = createHttpLink({
-  uri: import.meta.env?.VITE_BACKEND_URL,
+  uri: backendURL,
 });
 
 const authLink = setContext((_, { headers }) => {

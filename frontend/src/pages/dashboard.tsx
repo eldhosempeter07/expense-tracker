@@ -1,5 +1,7 @@
-import CustomChart from "../components/barChart";
-import PieCustomChart from "../components/piChart";
+import { lazy } from "react";
+
+const CustomChart = lazy(() => import("../components/barChart"));
+const PieCustomChart = lazy(() => import("../components/piChart"));
 
 const Dashboard = () => {
   const token = localStorage.getItem("token");
