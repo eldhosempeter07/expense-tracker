@@ -12,6 +12,10 @@ import {} from "./models/db.js";
 
 const app = express();
 
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
+});
+
 app.use(
   morgan(function (tokens, req, res) {
     return [
