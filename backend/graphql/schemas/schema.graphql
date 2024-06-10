@@ -75,6 +75,13 @@ type LoginData {
   message: String
 }
 
+type UserInfo {
+  username: String
+  email: String
+  phone: String
+  name: String
+}
+
 # Query
 
 type Query {
@@ -82,6 +89,8 @@ type Query {
   getExpenseChart: [ExpenseBarChart!]!
   getExpenseIncome: [ExpensePieChart!]!
   getExpenseByID(id: Int!): Expense!
+
+  getUserInfo: UserInfo!
 }
 
 # Mutation
