@@ -10,14 +10,10 @@ import { AuthenticationError } from "apollo-server-express";
 import cors from "cors";
 import {} from "./models/db.js";
 
+import "../frontend/dist";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-
-app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "frontend", "dist", "index.html"));
-});
 
 app.use(
   morgan(function (tokens, req, res) {
