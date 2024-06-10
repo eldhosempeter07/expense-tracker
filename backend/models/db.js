@@ -9,3 +9,7 @@ mongoose.connect(MONGO_URL);
 mongoose.connection.on("connected", () => {
   console.log("MongoDB Connected");
 });
+
+mongoose.connection.on("error", (error) => {
+  console.error("MongoDB connection error:", error);
+});

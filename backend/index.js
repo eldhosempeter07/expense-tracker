@@ -1,5 +1,4 @@
 import express from "express";
-import {} from "./models/db.js";
 import morgan from "morgan";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -8,6 +7,8 @@ import { ApolloServer } from "apollo-server-express";
 import { resolvers } from "./graphql/resolvers/resolvers.js";
 import jwt from "jsonwebtoken";
 import { AuthenticationError } from "apollo-server-express";
+import cors from "cors";
+import {} from "./models/db.js";
 
 const app = express();
 
@@ -24,6 +25,8 @@ morgan(function (tokens, req, res) {
 });
 
 app.use(morgan("dev"));
+
+app.use(cors());
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const typeDefs = fs.readFileSync(
@@ -48,14 +51,12 @@ const server = new ApolloServer({
   context: userContext,
 
   formatError: (error) => {
-    // Ensure that status code is included in error formatting
     if (error.originalError instanceof AuthenticationError) {
       return {
         message: error.message,
-        statusCode: 400, // Set status code for authentication errors
+        statusCode: 400,
       };
     }
-    // Default error formatting
     return error;
   },
 });
