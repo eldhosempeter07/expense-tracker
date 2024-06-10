@@ -1,0 +1,31 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "A project to track expense",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eldhosempeter07/expense-tracker.git"
+  },
+  "author": "Eldhose M Peter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eldhosempeter07/expense-tracker/issues"
+  },
+  "homepage": "https://github.com/eldhosempeter07/expense-tracker#readme",
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "graphql": "^16.8.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.1"
+  }
+}

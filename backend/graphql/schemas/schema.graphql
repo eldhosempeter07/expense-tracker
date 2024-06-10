@@ -1,0 +1,99 @@
+scalar GQLDate
+
+# Expense
+type Expense {
+  id: Int!
+  name: String!
+  date: GQLDate
+  type: String!
+  tag: String!
+  description: String
+  amount: Float!
+  recurring: Boolean
+  paymentMethod: String!
+  created: GQLDate
+}
+
+type ExpensePieChart {
+  name: String
+  amount: Float
+}
+
+type ExpenseBarChart {
+  income: String
+  expense: String
+  month: String
+}
+
+input InputExpense {
+  id: Int
+  name: String!
+  date: GQLDate
+  type: String!
+  tag: String!
+  description: String
+  amount: Float!
+  recurring: Boolean
+  paymentMethod: String!
+}
+
+# User
+
+type User {
+  username: String!
+  email: String!
+}
+
+type UserProfile {
+  username: String!
+  email: String!
+  phone: String
+  name: String
+}
+
+input UserProfileInput {
+  username: String!
+  email: String!
+  phone: String
+  name: String
+}
+
+input UserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input UserLoginInput {
+  username: String!
+  password: String!
+}
+
+type LoginData {
+  user: User
+  token: String
+  message: String
+}
+
+# Query
+
+type Query {
+  getExpenses: [Expense!]!
+  getExpenseChart: [ExpenseBarChart!]!
+  getExpenseIncome: [ExpensePieChart!]!
+  getExpenseByID(id: Int!): Expense!
+}
+
+# Mutation
+
+type Mutation {
+  # Expense
+  createExpense(expense: InputExpense!): Expense
+  updateExpense(id: Int!, expense: InputExpense!): Expense
+  removeExpense(id: Int!): Expense
+
+  # User
+  registerUser(user: UserInput): User
+  loginUser(user: UserLoginInput): LoginData
+  updateUser(user: UserProfileInput): UserProfile
+}
