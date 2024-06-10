@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { GET_EXPENSE_CHART } from "../service/graphql/expense";
 
-const CustomChart = () => {
+const CustomChart: React.FC = () => {
   const { data, loading, error } = useQuery(GET_EXPENSE_CHART);
 
   if (loading) {
