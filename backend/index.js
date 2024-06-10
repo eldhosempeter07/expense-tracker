@@ -10,10 +10,13 @@ import { AuthenticationError } from "apollo-server-express";
 import cors from "cors";
 import {} from "./models/db.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
+  res.sendFile(path.resolve(__dirname, "..", "frontend", "dist", "index.html"));
 });
 
 app.use(
@@ -32,7 +35,6 @@ app.use(
 
 app.use(cors());
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "graphql/schemas/schema.graphql"),
   "utf-8"
