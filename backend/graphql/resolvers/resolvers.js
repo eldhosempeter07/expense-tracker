@@ -41,7 +41,7 @@ export const resolvers = {
         const expenses = await Expense.find({ userId: user.username });
         return expenses;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -81,7 +81,7 @@ export const resolvers = {
 
         return res;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -107,7 +107,7 @@ export const resolvers = {
         const updatedTransaction = convertMonthsToArrayWithNames(result);
         return updatedTransaction;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -116,7 +116,7 @@ export const resolvers = {
         const expense = await Expense.findOne({ id });
         return expense;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -125,7 +125,7 @@ export const resolvers = {
         const userInfo = await User.findOne({ username: user?.username });
         return userInfo;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
   },
@@ -137,7 +137,7 @@ export const resolvers = {
         const newExpense = await Expense.create(expense);
         return newExpense;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
     updateExpense: async (_, { id, expense }) => {
@@ -147,7 +147,7 @@ export const resolvers = {
         });
         return updatedExpense;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
     removeExpense: async (_, { id }) => {
@@ -155,7 +155,7 @@ export const resolvers = {
         const removedExpense = await Expense.findOneAndDelete({ id });
         return removedExpense;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -167,7 +167,7 @@ export const resolvers = {
         const newUser = await User.create(user);
         return newUser;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -194,7 +194,7 @@ export const resolvers = {
           throw new AuthenticationError("Incorrect Username");
         }
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
 
@@ -209,7 +209,7 @@ export const resolvers = {
         );
         return updatedExpense;
       } catch (error) {
-        console.log(error);
+        return { message: error };
       }
     },
   },
