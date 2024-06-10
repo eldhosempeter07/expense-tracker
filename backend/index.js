@@ -12,19 +12,19 @@ import {} from "./models/db.js";
 
 const app = express();
 
-morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, "content-length"),
-    "-",
-    tokens["response-time"](req, res),
-    "ms",
-  ].join(" ");
-});
-
-app.use(morgan("dev"));
+app.use(
+  morgan(function (tokens, req, res) {
+    return [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+    ].join(" ");
+  })
+);
 
 app.use(cors());
 
@@ -35,20 +35,25 @@ const typeDefs = fs.readFileSync(
 );
 
 const userContext = ({ req }) => {
-  const token = req.headers.authorization.split(" ")[1] || "";
-  try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-    "user", user;
-    return { user };
-  } catch (err) {
-    console.log(err);
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1] || "";
+    try {
+      const user = jwt.verify(token, process.env.JWT_SECRET);
+      return { user };
+    } catch (err) {
+      console.log(err);
+    }
   }
+  return {};
 };
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: userContext,
+  cache: "bounded",
+  persistedQueries: true,
 
   formatError: (error) => {
     if (error.originalError instanceof AuthenticationError) {
