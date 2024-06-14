@@ -10,8 +10,6 @@ import { AuthenticationError } from "apollo-server-express";
 import cors from "cors";
 import {} from "./models/db.js";
 
-import "../frontend/dist";
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
